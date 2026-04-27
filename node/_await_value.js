@@ -1,8 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = _AwaitValue;
-function _AwaitValue(value) {
-    this.wrapped = value;
+export default function _AwaitValue(value) {
+  this.wrapped = value;
 }

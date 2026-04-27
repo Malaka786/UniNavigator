@@ -1,10 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = _classCallCheck;
-function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-    }
+export default function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
 }

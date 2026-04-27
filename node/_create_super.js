@@ -1,26 +1,18 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = _createSuper;
-var _isNativeReflectConstruct = _interopRequireDefault(require("./_is_native_reflect_construct"));
-var _getPrototypeOf = _interopRequireDefault(require("./_get_prototype_of"));
-var _possibleConstructorReturn = _interopRequireDefault(require("./_possible_constructor_return"));
-function _createSuper(Derived) {
-    var hasNativeReflectConstruct = (0, _isNativeReflectConstruct).default();
+import _isNativeReflectConstruct from "./_is_native_reflect_construct";
+import _getPrototypeOf from "./_get_prototype_of";
+import _possibleConstructorReturn from './_possible_constructor_return';
+
+export default function _createSuper(Derived) {
+    var hasNativeReflectConstruct = _isNativeReflectConstruct();
     return function _createSuperInternal() {
-        var Super = (0, _getPrototypeOf).default(Derived), result;
+        var Super = _getPrototypeOf(Derived),
+            result;
         if (hasNativeReflectConstruct) {
-            var NewTarget = (0, _getPrototypeOf).default(this).constructor;
+            var NewTarget = _getPrototypeOf(this).constructor;
             result = Reflect.construct(Super, arguments, NewTarget);
         } else {
             result = Super.apply(this, arguments);
         }
-        return (0, _possibleConstructorReturn).default(this, result);
-    };
-}
-function _interopRequireDefault(obj) {
-    return obj && obj.__esModule ? obj : {
-        default: obj
+        return _possibleConstructorReturn(this, result);
     };
 }

@@ -1,30 +1,25 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = _get;
-var _superPropBase = _interopRequireDefault(require("./_super_prop_base"));
-function _get(target, property, receiver) {
-    return get(target, property, receiver);
-}
-function _interopRequireDefault(obj) {
-    return obj && obj.__esModule ? obj : {
-        default: obj
+import superPropBase from './_super_prop_base';
+
+function get(target, property, receiver) {
+  if (typeof Reflect !== "undefined" && Reflect.get) {
+    get = Reflect.get;
+  } else {
+    get = function get(target, property, receiver) {
+      var base = superPropBase(target, property);
+      if (!base) return;
+      var desc = Object.getOwnPropertyDescriptor(base, property);
+
+      if (desc.get) {
+        return desc.get.call(receiver || target);
+      }
+
+      return desc.value;
     };
+  }
+
+  return get(target, property, receiver);
 }
-function get(target1, property1, receiver1) {
-    if (typeof Reflect !== "undefined" && Reflect.get) {
-        get = Reflect.get;
-    } else {
-        get = function get(target, property, receiver) {
-            var base = (0, _superPropBase).default(target, property);
-            if (!base) return;
-            var desc = Object.getOwnPropertyDescriptor(base, property);
-            if (desc.get) {
-                return desc.get.call(receiver || target);
-            }
-            return desc.value;
-        };
-    }
-    return get(target1, property1, receiver1);
+
+export default function _get(target, property, receiver) {
+  return get(target, property, receiver);
 }

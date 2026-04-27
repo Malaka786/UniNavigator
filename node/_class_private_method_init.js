@@ -1,15 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = _classPrivateMethodInit;
-var _checkPrivateRedeclaration = _interopRequireDefault(require("./_check_private_redeclaration"));
-function _classPrivateMethodInit(obj, privateSet) {
-    (0, _checkPrivateRedeclaration).default(obj, privateSet);
-    privateSet.add(obj);
-}
-function _interopRequireDefault(obj) {
-    return obj && obj.__esModule ? obj : {
-        default: obj
-    };
+import _checkPrivateRedeclaration from "./_check_private_redeclaration";
+
+export default function _classPrivateMethodInit(obj, privateSet) {
+  _checkPrivateRedeclaration(obj, privateSet);
+  privateSet.add(obj);
 }

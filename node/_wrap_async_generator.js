@@ -1,16 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = _wrapAsyncGenerator;
-var _asyncGenerator = _interopRequireDefault(require("./_async_generator"));
-function _wrapAsyncGenerator(fn) {
-    return function() {
-        return new _asyncGenerator.default(fn.apply(this, arguments));
-    };
-}
-function _interopRequireDefault(obj) {
-    return obj && obj.__esModule ? obj : {
-        default: obj
-    };
+import AsyncGenerator from './_async_generator';
+
+export default function _wrapAsyncGenerator(fn) {
+  return function () {
+    return new AsyncGenerator(fn.apply(this, arguments));
+  };
 }

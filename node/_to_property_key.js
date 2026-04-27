@@ -1,16 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = _toPropertyKey;
-var _typeOf = _interopRequireDefault(require("./_type_of"));
-var _toPrimitive = _interopRequireDefault(require("./_to_primitive"));
-function _toPropertyKey(arg) {
-    var key = (0, _toPrimitive).default(arg, "string");
-    return (0, _typeOf).default(key) === "symbol" ? key : String(key);
-}
-function _interopRequireDefault(obj) {
-    return obj && obj.__esModule ? obj : {
-        default: obj
-    };
+import _typeof from './_type_of';
+import toPrimitive from './_to_primitive';
+
+export default function _toPropertyKey(arg) {
+  var key = toPrimitive(arg, "string");
+  return _typeof(key) === "symbol" ? key : String(key);
 }
