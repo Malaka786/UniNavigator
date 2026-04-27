@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>UniNavigator – Academic Performance</title>
+
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Charts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- PDF Generator -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <!-- GPA Calculator Logic -->
+  <script src="js/gpa-calculator.js"></script>
+
+</head>
+
+<body>
+
+<!-- ================= AUTH ================= -->
+
+<div id="auth-screen" class="auth-wrap">
+  <div class="auth-card">
+
+    <h1>UniNavigator</h1>
+    <p class="brand-sub">Academic Performance Manager</p>
+
+    <div id="auth-error" class="error-msg hidden"></div>
+
+    <form id="login-form">
+
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="login-email" name="email" required placeholder="you@university.lk">
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="login-password" name="password" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block">Sign in</button>
+
+    </form>
+
+    <p class="auth-footer">
+      Don't have an account?
+      <a href="#" id="show-register">Register</a>
+    </p>
+
+  </div>
+</div>
+
+
+<!-- ================= REGISTER ================= -->
+
+<div id="register-screen" class="auth-wrap hidden">
+
+  <div class="auth-card">
+
+    <h1>Create account</h1>
+
+    <div id="register-error" class="error-msg hidden"></div>
+
+    <form id="register-form">
+
+      <div class="form-group">
+        <label>Full name</label>
+        <input type="text" id="reg-name" name="name" required>
+      </div>
+
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="reg-email" name="email" required>
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="reg-password" name="password" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block">Register</button>
+
+    </form>
+
+    <p class="auth-footer">
+      Already have an account?
+      <a href="#" id="show-login">Sign in</a>
+    </p>
+
+  </div>
+</div>
+
+
+<!-- ================= APP ================= -->
+
+<div id="app" class="app hidden">
+
+  <!-- Sidebar -->
+
+  <aside class="sidebar">
+
+    <div class="brand">UniNavigator</div>
+
+    <nav>
+
+      <a href="#" data-page="dashboard" class="nav-link student-only active">Dashboard</a>
+      <a href="#" data-page="gpa" class="nav-link student-only">GPA Calculator</a>
+      <a href="#" data-page="attendance" class="nav-link student-only">Attendance</a>
+      <a href="#" data-page="tasks" class="nav-link student-only">Task Planner</a>
+      <a href="#" data-page="repeat" class="nav-link student-only">Repeat & Improvement</a>
+      <a href="#" data-page="concerns" class="nav-link student-only">Feedback & Concerns</a>
+
+      <!-- Admin only -->
+      <a href="#" data-page="admin-dashboard" class="nav-link admin-only hidden">Admin Dashboard</a>
+      <a href="#" data-page="admin-users" class="nav-link admin-only hidden">Users</a>
+      <a href="#" data-page="admin-halls" class="nav-link admin-only hidden">Campus Halls</a>
+      <a href="#" data-page="admin-concerns" class="nav-link admin-only hidden">Concerns Inbox</a>
+      <a href="#" data-page="admin-usage" class="nav-link admin-only hidden">Usage Analytics</a>
+
+    </nav>
+
+    <div class="user-bar">
+
+      <div class="name" id="sidebar-name">–</div>
+      <div class="email" id="sidebar-email">–</div>
+
+      <button id="logout-btn">Log out</button>
+
+    </div>
+
+  </aside>
+
+
+  <!-- ================= MAIN ================= -->
+
+  <main class="main">
+
+    <div id="deadline-alert-banner" class="deadline-alert-banner hidden"></div>
+
+    <!-- ================= DASHBOARD ================= -->
+
+    <div id="page-dashboard" class="page active">
+
+      <h1>User</h1>
+      <p class="subtitle">Profile, goals & academic overview</p>
+
+      <!-- Profile + Report combined -->
+      <div class="dashboard-profile-section">
+        <div class="profile-card">
+          <div class="profile-pic-wrap">
+            <img id="profile-pic" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Crect fill='%23243044' width='120' height='120'/%3E%3Ctext x='50%25' y='50%25' dy='.3em' fill='%238b9cb8' text-anchor='middle' font-size='48' font-family='system-ui'%3E👤%3C/text%3E%3C/svg%3E" alt="Profile" class="profile-img">
+            <label class="upload-pic-label" for="upload-pic">Change photo</label>
+            <input type="file" id="upload-pic" accept="image/*" class="hidden-input">
+          </div>
+          <div class="profile-info">
+            <h2 id="dashboard-name">Student</h2>
+            <div class="profile-meta">
+              <span id="dashboard-index">–</span>
+              <span id="dashboard-email">–</span>
+            </div>
+          </div>
+        </div>
+        <div class="dashboard-report-action">
+          <button id="download-report" class="btn btn-primary">Download Academic Report (PDF)</button>
+          <button id="delete-profile-btn" class="btn btn-danger btn-small" style="margin-left:0.5rem;">Delete profile</button>
+        </div>
+      </div>
+
+      <!-- Delete profile confirmation modal -->
+      <div id="delete-profile-overlay" class="overlay">
+        <div class="modal">
+          <h3>Delete profile</h3>
+          <p>Are you sure you want to permanently delete your profile and all associated data? This cannot be undone.</p>
+          <div class="modal-actions">
+            <button id="delete-profile-confirm" class="btn btn-danger">Yes, delete my profile</button>
+            <button id="delete-profile-cancel" class="btn btn-ghost">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Current & Target Goals + Ongoing GPA -->
+      <div class="section">
+        <h2>Goals & GPA</h2>
+        <div class="cards-grid" id="dashboard-cards">
+          <div class="card">
+            <div class="label">Current GPA</div>
+            <div class="value" id="dashboard-current-gpa">–</div>
+          </div>
+          <div class="card">
+            <div class="label">Target GPA</div>
+            <div class="value" id="dashboard-target-gpa">–</div>
+          </div>
+          <div class="card">
+            <div class="label">Target Attendance %</div>
+            <div class="value" id="dashboard-target-attendance">–</div>
+          </div>
+          <div class="card">
+            <div class="label">Modules</div>
+            <div class="value" id="dashboard-module-count">0</div>
+          </div>
+        </div>
+        <div class="goals-edit-form">
+          <button type="button" id="edit-goals-btn" class="btn btn-ghost btn-small">Edit targets</button>
+          <div id="goals-edit-fields" class="hidden">
+            <input type="number" id="edit-target-gpa" step="0.01" min="0" max="4" placeholder="Target GPA">
+            <input type="number" id="edit-target-attendance" min="0" max="100" placeholder="Target attendance %">
+            <button type="button" id="save-goals-btn" class="btn btn-primary btn-small">Save</button>
+          </div>
+        </div>
+
+        <div class="notification-settings section-inline">
+          <h3 class="notification-settings-title">Deadline alerts</h3>
+          <label class="notification-toggle">
+            <input type="checkbox" id="notify-deadlines-checkbox" checked>
+            <span>Alert me when task deadlines are close</span>
+          </label>
+          <div class="notification-days-wrap">
+            <label for="deadline-reminder-days">Remind me</label>
+            <select id="deadline-reminder-days">
+              <option value="1">1 day before</option>
+              <option value="3" selected>3 days before</option>
+              <option value="7">7 days before</option>
+              <option value="14">14 days before</option>
+            </select>
+            <button type="button" id="save-notification-prefs" class="btn btn-primary btn-small">Save</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Row -->
+      <div class="cards-grid charts-row">
+        <div class="card">
+          <h3>GPA Progress</h3>
+          <canvas id="gpaChart"></canvas>
+        </div>
+        <div class="card">
+          <h3>Attendance Overview</h3>
+          <canvas id="dashboard-attendanceChart"></canvas>
+        </div>
+        <div class="card">
+          <h3>Repeat Progress</h3>
+          <canvas id="dashboard-repeatChart"></canvas>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Recent modules</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Module</th>
+                <th>Credits</th>
+                <th>Grade</th>
+                <th>Semester</th>
+              </tr>
+            </thead>
+            <tbody id="dashboard-modules"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Your timetable uploads</h2>
+        <p class="subtitle small">Uploaded from the Attendance page (PDF/JPG/PNG)</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>University</th>
+                <th>Semester</th>
+                <th>Year</th>
+                <th>File</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody id="dashboard-timetables-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- ================= GPA ================= -->
+
+    <div id="page-gpa" class="page">
+
+      <h1>GPA Calculator</h1>
+      <p class="subtitle">Weighted GPA = Σ(GradePoints × Credits) / Σ(Credits)</p>
+
+      <div class="cards-grid" id="gpa-summary-cards"></div>
+
+      <!-- Semester-wise GPA Display -->
+      <div id="gpa-semester-container" class="semester-container"></div>
+
+      <!-- Goal Planner -->
+      <div class="section goal-planner-section">
+        <h2>Goal Planner</h2>
+        <p class="subtitle small">Enter your target GPA to see what marks you need to achieve it.</p>
+        <div class="goal-planner-form">
+          <div class="form-group">
+            <label>Target GPA</label>
+            <input type="number" id="target-gpa-input" step="0.01" min="0" max="4" placeholder="e.g. 3.5">
+          </div>
+          <div class="form-group">
+            <label>Academic year</label>
+            <input type="number" id="goal-academic-year-input" min="1" max="10" placeholder="e.g. 1">
+          </div>
+          <div class="form-group">
+            <label>Semester</label>
+            <input type="number" id="goal-semester-input" min="1" max="3" placeholder="e.g. 1">
+          </div>
+          <div class="form-group">
+            <label>Total modules this semester</label>
+            <input type="number" id="goal-module-count-input" min="1" placeholder="e.g. 5">
+          </div>
+          <div class="form-group">
+            <label>Estimated credits per module</label>
+            <input type="number" id="goal-credits-per-module-input" min="1" max="30" value="3" placeholder="e.g. 3">
+          </div>
+          <button type="button" id="calculate-goal-btn" class="btn btn-primary">Calculate required marks</button>
+        </div>
+        <div id="goal-planner-result" class="goal-planner-result hidden"></div>
+      </div>
+
+      <div class="section">
+        <h2>Add module</h2>
+        <form id="gpa-add-form" class="form-inline">
+          <div class="form-group flex-1">
+            <label>Use existing module</label>
+            <select id="gpa-existing-module-select">
+              <option value="">Select existing module (optional)</option>
+            </select>
+          </div>
+          <div class="form-group flex-1">
+            <label>Module name</label>
+            <input type="text" name="name" id="gpa-mod-name" required>
+          </div>
+          <div class="form-group">
+            <label>Code</label>
+            <input type="text" name="code" id="gpa-mod-code" required>
+          </div>
+          <div class="form-group">
+            <label>Academic year</label>
+            <input type="number" name="academic_year" id="gpa-mod-academic-year" min="1" max="10" value="1" required>
+          </div>
+          <div class="form-group">
+            <label>Semester</label>
+            <input type="number" name="semester_in_year" id="gpa-mod-semester-in-year" min="1" max="3" value="1" required>
+          </div>
+          <div class="form-group">
+            <label>University</label>
+            <select id="gpa-mod-university" required>
+              <option value="">Select university</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Credits</label>
+            <input type="number" name="credits" id="gpa-mod-credits" required>
+          </div>
+          <div class="form-group">
+            <label>CA %</label>
+            <input type="number" name="ca_percentage" id="gpa-mod-ca" min="0" max="100" placeholder="e.g. 75">
+          </div>
+          <div class="form-group">
+            <label>Grade</label>
+            <select name="grade_letter" id="gpa-mod-grade">
+              <option value="">–</option>
+              <option value="A+">A+</option>
+              <option value="A">A</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B">B</option>
+              <option value="B-">B-</option>
+              <option value="C+">C+</option>
+              <option value="C">C</option>
+              <option value="C-">C-</option>
+              <option value="D">D</option>
+              <option value="E">E</option>
+              <option value="F">F</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Semester</label>
+            <input type="number" name="semester" id="gpa-mod-semester" value="1">
+          </div>
+          <button type="submit" class="btn btn-primary">Add</button>
+        </form>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Module</th><th>Code</th><th>Credits</th><th>CA%</th><th>Grade</th><th></th><th></th></tr>
+            </thead>
+            <tbody id="gpa-modules-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- ================= ATTENDANCE ================= -->
+
+    <div id="page-attendance" class="page">
+
+      <h1>Attendance Tracker</h1>
+      <p class="subtitle">80% rule – track sessions and safe absences</p>
+
+      <div class="section">
+        <h2>Add module (for attendance)</h2>
+        <p class="subtitle small">Add modules here to use them in the attendance dropdown below.</p>
+        <form id="attendance-add-module-form" class="form-inline">
+          <div class="form-group">
+            <label>University</label>
+            <select id="attendance-module-university" required>
+              <option value="">Select university</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Academic year</label>
+            <input type="number" id="attendance-module-academic-year" min="1" max="10" value="1" required>
+          </div>
+          <div class="form-group">
+            <label>Semester</label>
+            <input type="number" id="attendance-module-semester-in-year" min="1" max="3" value="1" required>
+          </div>
+          <div class="form-group flex-1">
+            <label>Module name</label>
+            <input type="text" id="attendance-module-name" placeholder="e.g. Database Systems" required>
+          </div>
+          <div class="form-group">
+            <label>Code</label>
+            <input type="text" id="attendance-module-code" placeholder="e.g. CS205">
+          </div>
+          <button type="submit" class="btn btn-primary">Add module</button>
+        </form>
+      </div>
+
+      <div class="section">
+        <h2>Mark attendance (geofence)</h2>
+        <p class="subtitle small">Select your university. Attendance can be marked only when your GPS location is inside one of the lecture hall circles (geofence).</p>
+
+        <div class="form-inline">
+          <div class="form-group flex-1">
+            <label>University</label>
+            <select id="attendance-university-select" required>
+              <option value="">Select university</option>
+            </select>
+          </div>
+          <div class="form-group flex-1">
+            <label>Geofenced halls</label>
+            <div id="attendance-halls-summary" class="text-muted">–</div>
+          </div>
+        </div>
+
+        <div class="section" style="padding-left:0; padding-right:0;">
+          <h2>Upload timetable (PDF)</h2>
+          <p class="subtitle small">Upload your semester timetable. Admins can use it to verify hall schedules.</p>
+          <form id="attendance-timetable-upload-form" class="form-inline" enctype="multipart/form-data">
+            <div class="form-group">
+              <label>Semester</label>
+              <input type="number" id="attendance-timetable-semester" required min="1" placeholder="e.g. 1">
+            </div>
+            <div class="form-group">
+              <label>Academic year</label>
+              <input type="number" id="attendance-timetable-year" required min="1" max="10" step="1" placeholder="e.g. 1">
+            </div>
+            <div class="form-group flex-1">
+              <label>PDF file</label>
+              <input type="file" id="attendance-timetable-file" accept="application/pdf" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Upload</button>
+          </form>
+          <div id="attendance-timetable-upload-msg" class="hidden" style="margin-top:0.7rem;"></div>
+        </div>
+
+        <!-- ================= DAY-WISE SLOTS ================= -->
+        <div class="section" style="padding-left:0; padding-right:0;">
+          <h2>Day-wise schedule slots</h2>
+          <p class="subtitle small">Add lecture/lab slots (structured). Slots are automatically verified based on your uploaded timetable.</p>
+
+          <form id="attendance-slot-add-form" class="form-inline">
+            <div class="form-group">
+              <label>Day</label>
+              <select id="attendance-slot-day" required>
+                <option value="">Select day</option>
+                <option value="Monday">Monday</option>
+                <option value="Tuesday">Tuesday</option>
+                <option value="Wednesday">Wednesday</option>
+                <option value="Thursday">Thursday</option>
+                <option value="Friday">Friday</option>
+                <option value="Saturday">Saturday</option>
+                <option value="Sunday">Sunday</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Start</label>
+              <input type="time" id="attendance-slot-start" required>
+            </div>
+            <div class="form-group">
+              <label>End</label>
+              <input type="time" id="attendance-slot-end" required>
+            </div>
+            <div class="form-group">
+              <label>Mode</label>
+              <select id="attendance-slot-mode">
+                <option value="physical" selected>physical</option>
+                <option value="online">online</option>
+              </select>
+            </div>
+            <div class="form-group flex-1">
+              <label>Module</label>
+              <select id="attendance-slot-module-select" required>
+                <option value="">Select module</option>
+              </select>
+            </div>
+            <div class="form-group flex-1 hidden" id="attendance-slot-hall-group">
+              <label>Hall (for physical)</label>
+              <select id="attendance-slot-hall-select">
+                <option value="">Select hall</option>
+              </select>
+            </div>
+            <div class="form-group flex-1">
+              <label>Location / Lab</label>
+              <input type="text" id="attendance-slot-location" maxlength="255" placeholder="e.g. Lecture Hall A / Lab 2">
+            </div>
+            <div class="form-group">
+              <label>Semester</label>
+              <input type="number" id="attendance-slot-semester" min="1" required>
+            </div>
+            <div class="form-group">
+              <label>Academic year</label>
+              <input type="number" id="attendance-slot-year" min="1" max="10" required step="1">
+            </div>
+            <button type="submit" class="btn btn-primary">Add slot</button>
+          </form>
+
+          <div class="section" style="padding-left:0; padding-right:0;">
+            <h2>Your slots</h2>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Day</th>
+                    <th>Time</th>
+                    <th>Module</th>
+                    <th>Mode</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="attendance-slots-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="geofence-status-card" id="geofence-status-card">
+          <div class="geofence-visual" id="geofence-visual">
+            <div class="geofence-circle"></div>
+            <div class="geofence-dot" id="geofence-dot"></div>
+            <span class="geofence-status-icon" id="geofence-status-icon">📍</span>
+          </div>
+          <div class="geofence-info">
+            <div class="geofence-status-text" id="geofence-status-text">Check your location to mark attendance</div>
+            <div class="geofence-status-detail" id="geofence-status-detail">Tap "Check location" to verify you're within the class area</div>
+            <button type="button" id="check-geofence-btn" class="btn btn-primary">Check location</button>
+          </div>
+        </div>
+
+        <div id="attendance-mark-section" class="attendance-mark-section hidden">
+          <div class="geofence-success-banner">
+            <span class="geofence-success-icon">✓</span> You're within the geofence. You can mark attendance.
+          </div>
+          <form id="attendance-form" class="form-inline">
+            <div class="form-group">
+              <label>Mode</label>
+              <select id="attendance-delivery-mode">
+                <option value="offline" selected>Offline</option>
+                <option value="online">Online</option>
+              </select>
+            </div>
+            <div class="form-group" id="attendance-hall-group">
+              <label>Lecture hall</label>
+              <select id="attendance-hall-select">
+                <option value="">Select hall</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Date</label>
+              <input type="date" id="attendance-lecture-date">
+            </div>
+            <div class="form-group">
+              <label>Schedule slot</label>
+              <select id="attendance-slot-select" required>
+                <option value="">Select slot</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Module</label>
+              <select name="module_name" id="attendance-module-select">
+                <option value="">Select module</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Total sessions</label>
+              <input type="number" name="total_sessions" id="attendance-total" min="0">
+            </div>
+            <div class="form-group">
+              <label>Attended</label>
+              <input type="number" name="attended" id="attendance-attended" min="0">
+            </div>
+            <div class="form-group">
+              <label>Semester</label>
+              <input type="number" name="semester" id="attendance-semester" min="1">
+            </div>
+            <div class="form-group">
+              <label>Academic year</label>
+              <input type="number" id="attendance-academic-year" min="1" max="10" value="1">
+            </div>
+            <div class="form-group flex-1 hidden" id="attendance-online-proof-group">
+              <label>Online lecture proof (PDF)</label>
+              <input type="file" id="attendance-online-proof" accept="application/pdf">
+            </div>
+            <button type="submit" class="btn btn-primary">Mark attendance</button>
+          </form>
+        </div>
+
+        <div id="geofence-outside-msg" class="geofence-outside-msg hidden">
+          <span class="geofence-outside-icon">⚠</span>
+          <p>You're outside the class geofence. Please move within the designated area to mark attendance.</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Attendance chart</h2>
+        <canvas id="page-attendanceChart"></canvas>
+      </div>
+
+      <div class="section">
+        <h2>By module</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Module</th><th>Attended</th><th>Total</th><th>%</th></tr>
+            </thead>
+            <tbody id="attendance-table"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- ================= TASK PLANNER ================= -->
+
+    <div id="page-tasks" class="page">
+
+      <h1>Task Planner</h1>
+      <p class="subtitle">Track tasks with target vs current progress</p>
+
+      <div class="section">
+        <h2>Progress overview</h2>
+        <div class="card chart-card">
+          <canvas id="tasksChart"></canvas>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Add task</h2>
+        <form id="task-add-form" class="form-inline">
+          <div class="form-group">
+            <label>Module code</label>
+            <input type="text" name="module_code" id="task-module-code" placeholder="e.g. IT1130" required>
+          </div>
+          <div class="form-group flex-1">
+            <input type="text" name="title" id="task-title" placeholder="Task title" required>
+          </div>
+          <div class="form-group">
+            <label>Due date</label>
+            <input type="date" name="due_date" id="task-due-date">
+          </div>
+          <div class="form-group">
+            <label>Priority (1–10)</label>
+            <input type="number" name="priority_score" id="task-priority" min="1" max="10" value="5">
+          </div>
+          <button type="submit" class="btn btn-primary">Add task</button>
+        </form>
+      </div>
+
+      <div class="section">
+        <h2>Tasks</h2>
+        <div id="tasks-list"></div>
+      </div>
+
+    </div>
+
+
+    <!-- ================= REPEAT ================= -->
+
+    <div id="page-repeat" class="page">
+
+      <h1>Repeat & Improvement</h1>
+      <p class="subtitle">Target vs current status for repeat modules</p>
+
+      <div class="section">
+        <h2>Progress chart</h2>
+        <div class="cards-grid">
+          <div class="card chart-card">
+            <h3>Target vs current</h3>
+            <canvas id="page-repeatChart"></canvas>
+          </div>
+          <div class="card chart-card">
+            <h3>Normal vs Repeat modules</h3>
+            <canvas id="repeat-pie-chart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>Chart explanation</h3>
+        <p>
+          The bar chart shows your target (e.g. zero repeat modules) vs current repeat count.
+          The pie chart shows completed normal modules vs modules that must be repeated.
+        </p>
+      </div>
+
+      <div class="section">
+        <h2>Add repeat/improvement module</h2>
+        <form id="repeat-add-module-form" class="form-inline">
+          <div class="form-group">
+            <label>University</label>
+            <select id="repeat-add-university" required>
+              <option value="">Select university</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Academic year</label>
+            <input type="number" id="repeat-add-academic-year" min="1" max="10" value="1" required>
+          </div>
+          <div class="form-group">
+            <label>Semester</label>
+            <input type="number" id="repeat-add-semester-in-year" min="1" max="3" value="1" required>
+          </div>
+          <div class="form-group flex-1">
+            <label>Module name</label>
+            <input type="text" id="repeat-add-module-name" required>
+          </div>
+          <div class="form-group">
+            <label>Module code</label>
+            <input type="text" id="repeat-add-module-code" required>
+          </div>
+          <div class="form-group">
+            <label>Credits</label>
+            <input type="number" id="repeat-add-credits" min="1" max="30" value="3" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Add module</button>
+        </form>
+      </div>
+
+      <div class="section">
+        <h2>Record improvement</h2>
+        <p class="subtitle small">Replace a failed or low grade with your new result. CGPA will recalculate automatically.</p>
+        <form id="repeat-record-improvement-form" class="form-inline">
+          <div class="form-group">
+            <label>Module</label>
+            <select id="repeat-improve-module" required>
+              <option value="">Select module</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>New grade</label>
+            <select id="repeat-improve-grade">
+              <option value="A+">A+</option>
+              <option value="A">A</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B">B</option>
+              <option value="B-">B-</option>
+              <option value="C+">C+</option>
+              <option value="C">C</option>
+              <option value="C-">C-</option>
+              <option value="D">D</option>
+              <option value="E">E</option>
+              <option value="F">F</option>
+            </select>
+          </div>
+          <div class="form-group notification-toggle">
+            <input type="checkbox" id="repeat-improve-no-longer-repeat" checked>
+            <label for="repeat-improve-no-longer-repeat">Mark as passed (no longer repeat)</label>
+          </div>
+          <button type="submit" class="btn btn-primary">Save improvement</button>
+        </form>
+      </div>
+
+      <div class="section">
+        <h2>Academic history</h2>
+        <p class="subtitle small">Remove duplicate or wrong entries with Remove. Use Improve to record a new grade for that module.</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Module</th>
+                <th>Code</th>
+                <th>Credits</th>
+                <th>Grade</th>
+                <th>Year/Sem</th>
+                <th>Repeat</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="repeat-modules-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ================= CONCERNS ================= -->
+
+    <div id="page-concerns" class="page">
+
+      <h1>Feedback & Concerns</h1>
+      <p class="subtitle">Send feedback to the university administration</p>
+
+      <div class="section">
+        <h2>Submit a concern</h2>
+        <form id="concern-submit-form" class="form-inline">
+          <div class="form-group flex-1">
+            <label>University</label>
+            <select id="concerns-university-select" required>
+              <option value="">Select university</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Category</label>
+            <select id="concerns-category">
+              <option value="General">General</option>
+              <option value="Attendance">Attendance</option>
+              <option value="GPA">GPA</option>
+              <option value="Technical">Technical</option>
+            </select>
+          </div>
+          <div class="form-group flex-1" style="min-width: 240px;">
+            <label>Message</label>
+            <textarea id="concerns-message" rows="3" style="width:100%; padding:0.65rem 0.9rem; background:var(--bg-elevated); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text); font-family:var(--font-sans);" required maxlength="2000" placeholder="Write your concern..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+      </div>
+
+      <div class="section">
+        <h2>Your concerns</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>University</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Message</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody id="concerns-list-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ================= ADMIN DASHBOARD ================= -->
+
+    <div id="page-admin-dashboard" class="page">
+      <h1>Admin Dashboard</h1>
+      <p class="subtitle">Campus geofences, users, concerns, and analytics</p>
+
+      <div class="cards-grid" id="admin-summary-cards">
+        <div class="card">
+          <div class="label">Total users</div>
+          <div class="value" id="admin-total-users">0</div>
+        </div>
+        <div class="card">
+          <div class="label">Total campuses</div>
+          <div class="value" id="admin-total-universities">0</div>
+        </div>
+        <div class="card">
+          <div class="label">Open concerns</div>
+          <div class="value" id="admin-open-concerns">0</div>
+        </div>
+        <div class="card">
+          <div class="label">Lecture halls</div>
+          <div class="value" id="admin-total-halls">0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= ADMIN USERS ================= -->
+
+    <div id="page-admin-users" class="page">
+      <h1>Registered Users</h1>
+      <p class="subtitle">View users and change authority level</p>
+
+      <div class="section">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Index</th>
+                <th>Role</th>
+                <th>Created</th>
+                <th>Change role</th>
+              </tr>
+            </thead>
+            <tbody id="admin-users-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= ADMIN HALLS ================= -->
+
+    <div id="page-admin-halls" class="page">
+      <h1>Campus Lecture Halls (Circle Geofences)</h1>
+      <p class="subtitle">Add hall circles with building and floor number</p>
+
+      <div class="section">
+        <h2>Select campus</h2>
+        <div class="form-inline">
+          <div class="form-group flex-1">
+            <label>University</label>
+            <select id="admin-university-select-halls" required>
+              <option value="">Select university</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Add new university</h2>
+        <form id="admin-add-university-form" class="form-inline">
+          <div class="form-group flex-1">
+            <label>University name</label>
+            <input id="admin-university-name" type="text" required maxlength="255" placeholder="e.g. Uni A">
+          </div>
+          <div class="form-group flex-1">
+            <label>General email (for forwarding)</label>
+            <input id="admin-university-email" type="email" required maxlength="255" placeholder="admin@unia.edu">
+          </div>
+          <button type="submit" class="btn btn-primary">Add university</button>
+        </form>
+      </div>
+
+      <div class="section">
+        <h2>Add hall geofence</h2>
+        <p class="subtitle small">Use map click to set center point. Radius controls circle size.</p>
+        <div id="admin-hall-map" style="height: 320px; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 1rem;"></div>
+        <form id="admin-add-hall-form" class="form-inline">
+          <div class="form-group flex-1">
+            <label>Hall name</label>
+            <input id="admin-hall-name" type="text" required maxlength="255" placeholder="e.g. Lecture Hall A">
+          </div>
+          <div class="form-group flex-1">
+            <label>Building</label>
+            <input id="admin-hall-building" type="text" maxlength="255" placeholder="e.g. Engineering Block">
+          </div>
+          <div class="form-group">
+            <label>Floor</label>
+            <input id="admin-hall-floor" type="number" placeholder="e.g. 1">
+          </div>
+          <div class="form-group">
+            <label>Center lat</label>
+            <input id="admin-hall-lat" type="number" step="0.0000001" required placeholder="e.g. 6.9271">
+          </div>
+          <div class="form-group">
+            <label>Center lng</label>
+            <input id="admin-hall-lng" type="number" step="0.0000001" required placeholder="e.g. 79.8612">
+          </div>
+          <div class="form-group">
+            <label>Radius (m)</label>
+            <input id="admin-hall-radius" type="number" required placeholder="e.g. 80">
+          </div>
+          <button type="submit" class="btn btn-primary">Add hall</button>
+        </form>
+      </div>
+
+      <div class="section">
+        <h2>Existing halls</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Hall</th>
+                <th>Building</th>
+                <th>Floor</th>
+                <th>Lat</th>
+                <th>Lng</th>
+                <th>Radius</th>
+                <th>Remove</th>
+              </tr>
+            </thead>
+            <tbody id="admin-halls-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= ADMIN TIMETABLE PDF ================= -->
+
+    <div id="page-admin-timetable" class="page">
+      <h1>Timetable PDF Upload</h1>
+      <p class="subtitle">Upload PDFs to help verify hall usage</p>
+
+      <div class="section">
+        <h2>Upload</h2>
+        <form id="admin-timetable-upload-form" class="form-inline" enctype="multipart/form-data">
+          <div class="form-group flex-1">
+            <label>University</label>
+            <select id="admin-university-select-timetable" required>
+              <option value="">Select university</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Semester</label>
+            <input id="admin-timetable-semester" type="text" required placeholder="e.g. 2026-1">
+          </div>
+          <div class="form-group flex-1">
+            <label>PDF file</label>
+            <input id="admin-timetable-file" type="file" accept="application/pdf" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Upload</button>
+        </form>
+      </div>
+
+      <div class="section">
+        <h2>Uploaded PDFs</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Semester</th>
+                <th>File</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody id="admin-timetable-list-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= ADMIN CONCERNS ================= -->
+
+    <div id="page-admin-concerns" class="page">
+      <h1>Concerns Inbox</h1>
+      <p class="subtitle">Forward concerns to the relevant university email</p>
+
+      <div class="section">
+        <h2>Filter</h2>
+        <div class="form-inline">
+          <div class="form-group">
+            <label>Status</label>
+            <select id="admin-concerns-status">
+              <option value="open" selected>Open</option>
+              <option value="forwarded">Forwarded</option>
+              <option value="closed">Closed</option>
+            </select>
+          </div>
+          <button type="button" id="admin-refresh-concerns-btn" class="btn btn-ghost">Refresh</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Concerns</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>University</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Message</th>
+                <th>Forward</th>
+              </tr>
+            </thead>
+            <tbody id="admin-concerns-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= ADMIN ATTENDANCE QUEUE ================= -->
+
+    <div id="page-admin-attendance-queue" class="page">
+      <h1>Attendance Verification Queue</h1>
+      <p class="subtitle">Approve or reject attendance submissions that need verification</p>
+
+      <div class="section">
+        <div class="form-inline">
+          <div class="form-group">
+            <label>Status</label>
+            <select id="admin-attendance-queue-status">
+              <option value="" selected>Pending + Timetable Missing</option>
+              <option value="pending">Pending</option>
+              <option value="timetable_missing">Timetable Missing</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+          <button type="button" id="admin-attendance-queue-refresh" class="btn btn-ghost">Refresh</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Module</th>
+                <th>University</th>
+                <th>Hall</th>
+                <th>Mode</th>
+                <th>Date</th>
+                <th>Attendance</th>
+                <th>Status</th>
+                <th>Proof</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-attendance-queue-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= ADMIN USAGE ================= -->
+
+    <div id="page-admin-usage" class="page">
+      <h1>Usage Analytics (Last 7 Days)</h1>
+      <p class="subtitle">Counts + charts + export as Excel</p>
+
+      <div class="section">
+        <h2>Summary</h2>
+        <div class="cards-grid" id="admin-usage-summary-cards">
+          <div class="card"><div class="label">Total events</div><div class="value" id="admin-total-events">0</div></div>
+          <div class="card"><div class="label">Pages viewed</div><div class="value" id="admin-total-page-views">0</div></div>
+          <div class="card"><div class="label">Tasks added</div><div class="value" id="admin-total-task-adds">0</div></div>
+          <div class="card"><div class="label">Tasks completed</div><div class="value" id="admin-total-task-completes">0</div></div>
+          <div class="card"><div class="label">Attendance marks</div><div class="value" id="admin-total-attendance-marks">0</div></div>
+          <div class="card"><div class="label">Concerns submitted</div><div class="value" id="admin-total-concerns-submits">0</div></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Events by day</h2>
+        <div class="card chart-card">
+          <canvas id="admin-usage-chart"></canvas>
+        </div>
+      </div>
+
+      <div class="section">
+        <button type="button" id="admin-export-usage-excel" class="btn btn-primary">Export usage to Excel</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+
+<script src="js/app.js"></script>
+
+</body>
+</html>
